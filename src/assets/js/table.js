@@ -1,5 +1,4 @@
-
-
+import {getAll} from "./fetch.js"
 
 function displayFavourite(favourite) {
     const contianer = document.querySelector(".table");
@@ -26,15 +25,8 @@ function displayFavouriteList(){
         <div class="column">Updated at</div>
     </div>`;
 
-    fetch('http://127.0.0.1:8080/favourite/get',
-    {
-        method: "GET",
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response=>response.json())
-    .then(list => 
+    
+    getAll().then(list => 
         {
             for (const index in list) {
                 displayFavourite(list[index]);
