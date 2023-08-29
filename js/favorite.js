@@ -1,11 +1,11 @@
 angular.module('favoriteApp', [])
     .controller('FavoritesController', function($scope, $http) {
-
+        BASE_URL = "http://127.0.0.1:8080/";
         $scope.categories = [];
         $scope.realCategories = [];
         $scope.favorites = [];
 
-        $scope.categoryFilter = 0;
+        $scope.categoryFilter;
 
         $scope.mode = 'view';
 
@@ -30,7 +30,7 @@ angular.module('favoriteApp', [])
         }
 
         $scope.validate = function() {
-            $http.post('api/category/' + $scope.favorite.category + '/favorites' , { id: null, link: $scope.favorite.link }).then(
+            $http.post(BASE_URL + 'favourite/add', { id: null, link: $scope.favorite.link, categoryId:  $scope.favorite.category}).then(
                 function() {
                     $scope.refresh();
                     $scope.setMode('view');
@@ -40,21 +40,31 @@ angular.module('favoriteApp', [])
             )
         }
 
-        $scope.refresh = function() {
-            $http.get('api/categories').then(
+        $scope.refresh = function(itemFilter = null) {
+            $http.get(BASE_URL + 'category/get').then(
                 function(response) {
-                    $scope.categories = [{id: 0, label: "Everything", references: 0}];
+                    sum = 0;
+                    $scope.categories = [];
                     response.data.forEach(d => {
                         $scope.categories.push(d);
+                        sum+=d.references;
                     })
-
-                    $http.get('api/favorites').then(
+                    $scope.categories.push({id: 0, name: "Everything", references: sum});
+                    link = BASE_URL + 'favourite/get?';
+                    if(itemFilter) {
+                        link+="categoryId="+itemFilter;
+                    }
+                    $http.get(link).then(
                         function(response) {
-                            $scope.favorites = response.data.filter(f => $scope.categoryFilter === 0 || f.category.id === $scope.selectedCategory);
+                            $scope.favorites = response.data;
                         }
                     )
                 }
             )
+        }
+
+        $scope.filterFavorites = function(catFilter) {
+            $scope.refresh(catFilter);
         }
 
         $scope.refresh();

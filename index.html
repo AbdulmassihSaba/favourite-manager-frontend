@@ -23,9 +23,9 @@
               <div class="select is-fullwidth">
 
                 <select
-                        data-ng-change="filterFavorites()"
                         data-ng-model="categoryFilter"
-                        data-ng-options="item.id as item.label for item in categories"
+                        data-ng-change="filterFavorites(categoryFilter)"
+                        data-ng-options="item.id as (item.name + ' (' + item.references + ')' ) for item in categories"
                         required="required">
                 </select>
 
@@ -56,7 +56,7 @@
                   <label class="label">Category *</label>
                   <div class="control">
                     <div class="select is-fullwidth">
-                      <select data-ng-model="favorite.category" data-ng-options="item.id as item.label for item in realCategories" required="required"></select>
+                      <select data-ng-model="favorite.category" data-ng-options="item.id as item.name for item in realCategories" required="required"></select>
                     </div>
                   </div>
                 </div>
@@ -75,6 +75,7 @@
                   <tr>
                     <th class="is-narrow">ID</th>
                     <th>Link</th>
+                    <th>Category</th>
                     <th class="is-narrow">Last Update</th>
                   </tr>
                 </thead>
@@ -85,7 +86,8 @@
                   <tr data-ng-repeat="f in favorites | orderBy: sortCriteria">
                     <td>{{ f.id }}</td>
                     <td><a data-ng-href="f.link" target="_blank">{{ f.link }}</a></td>
-                    <td>{{ f.update | date: 'yyyy-MM-dd' }}</td>
+                    <td>{{ f.categoryName }}</td>
+                    <td>{{ f.updatedAt | date: 'yyyy-MM-dd' }}</td>
                   </tr>
                 </tbody>
               </table>
