@@ -4,9 +4,7 @@ angular.module('favoriteApp', [])
         $scope.categories = [];
         $scope.realCategories = [];
         $scope.favorites = [];
-
         $scope.categoryFilter;
-
         $scope.mode = 'view';
 
         $scope.favorite = {};
@@ -18,19 +16,23 @@ angular.module('favoriteApp', [])
                 if (idx < 0) idx = 0;
 
                 $scope.favorite = {
-                    link: '',
-                    category: $scope.realCategories[idx].id
+                    id: $scope.favorite.id?$scope.favorite.id:null,
+                    link: $scope.favorite.link?$scope.favorite.link:'',
+                    category: $scope.favorite.category?$scope.favorite.category.id:$scope.realCategories[idx].id
                 }
             }
+            else
+                $scope.favorite={};
             $scope.mode = text;
         }
-
         $scope.cancel = function() {
             $scope.setMode('view');
+            
         }
 
         $scope.validate = function() {
-            $http.post(BASE_URL + 'favourite/add', { id: null, link: $scope.favorite.link, categoryId:  $scope.favorite.category}).then(
+            data={ id: $scope.favorite.id, link: $scope.favorite.link, categoryId:  $scope.favorite.category};
+            $http.post(BASE_URL + 'favourite/add', data).then(
                 function() {
                     $scope.refresh();
                     $scope.setMode('view');
@@ -48,17 +50,18 @@ angular.module('favoriteApp', [])
                     response.data.forEach(d => {
                         $scope.categories.push(d);
                         sum+=d.references;
-                    })
+                    });
                     $scope.categories.push({id: 0, name: "Everything", references: sum});
                     link = BASE_URL + 'favourite/get?';
                     if(itemFilter) {
                         link+="categoryId="+itemFilter;
                     }
                     $http.get(link).then(
-                        function(response) {
-                            $scope.favorites = response.data;
+                        function(res) {
+                            $scope.favorites = res.data;
                         }
                     )
+                    
                 }
             )
         }
@@ -68,4 +71,12 @@ angular.module('favoriteApp', [])
         }
 
         $scope.refresh();
+
+        $scope.delete = function(id) {
+            $http.delete(BASE_URL + 'favourite/delete?ids='+id).then(
+                function() {
+                    $scope.refresh();
+                }
+            );
+        }
     });

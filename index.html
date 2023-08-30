@@ -21,18 +21,12 @@
           <div class="columns">
             <div class="column">
               <div class="select is-fullwidth">
-
                 <select
                         data-ng-model="categoryFilter"
                         data-ng-change="filterFavorites(categoryFilter)"
                         data-ng-options="item.id as (item.name + ' (' + item.references + ')' ) for item in categories"
                         required="required">
                 </select>
-
-
-
-
-
               </div>
             </div>
             <div class="column  is-narrow">
@@ -86,8 +80,14 @@
                   <tr data-ng-repeat="f in favorites | orderBy: sortCriteria">
                     <td>{{ f.id }}</td>
                     <td><a data-ng-href="f.link" target="_blank">{{ f.link }}</a></td>
-                    <td>{{ f.categoryName }}</td>
+                    <td>{{ f.category.name }}</td>
                     <td>{{ f.updatedAt | date: 'yyyy-MM-dd' }}</td>
+                    <td class="is-narrow">
+                      <a data-ng-click="favorite.link=f.link;favorite.category=f.category;favorite.id=f.id;setMode('creation')">update</a> 
+                    </td>
+                    <td class="is-narrow">
+                      <a data-ng-click="delete(f.id)">delete</a>
+                    </td>
                   </tr>
                 </tbody>
               </table>
