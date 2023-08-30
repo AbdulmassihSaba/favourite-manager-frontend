@@ -67,10 +67,17 @@
               <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr>
+                    <th>
+                      <label class="checkbox">
+                        <input type="checkbox" data-ng-model="allChecked" data-ng-change="toggleAll()">
+                      </label>
+                      <button class="delete" data-ng-click="deleteMultiple()">X</button>
+                      
+                    </th>
                     <th class="is-narrow">ID</th>
                     <th>Link</th>
-                    <th>Category</th>
-                    <th class="is-narrow">Last Update</th>
+                    <th data-ng-click="sort('category')" class="is-clickable">Category</th>
+                    <th data-ng-click="sort('updateTime')" class="is-narrow is-clickable">Last Update</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,6 +85,11 @@
                     <td colspan="4">No data !</td>
                   </tr>
                   <tr data-ng-repeat="f in favorites | orderBy: sortCriteria">
+                    <td>
+                      <label class="checkbox">
+                        <input type="checkbox" data-ng-model="checked[f.id]" data-ng-change="toggle(f.id)">
+                      </label>
+                    </td>
                     <td>{{ f.id }}</td>
                     <td><a data-ng-href="f.link" target="_blank">{{ f.link }}</a></td>
                     <td>{{ f.category.name }}</td>

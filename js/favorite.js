@@ -4,10 +4,12 @@ angular.module('favoriteApp', [])
         $scope.categories = [];
         $scope.realCategories = [];
         $scope.favorites = [];
-        $scope.categoryFilter;
+        $scope.categoryFilter = 0;
         $scope.mode = 'view';
-
+        $scope.sortType = {"category": "ASC", "updateTime": "ASC"};
         $scope.favorite = {};
+        $scope.checked = new Array(100).fill(false);
+        $scope.allChecked = false;
 
         $scope.setMode = function(text) {
             if (text === 'creation') {
@@ -27,7 +29,6 @@ angular.module('favoriteApp', [])
         }
         $scope.cancel = function() {
             $scope.setMode('view');
-            
         }
 
         $scope.validate = function() {
@@ -40,9 +41,10 @@ angular.module('favoriteApp', [])
                     alert(error.data.message);
                 }
             )
+            $scope.categoryFilter = 0;
         }
 
-        $scope.refresh = function(itemFilter = null) {
+        $scope.refresh = function() {
             $http.get(BASE_URL + 'category/get').then(
                 function(response) {
                     sum = 0;
@@ -53,8 +55,8 @@ angular.module('favoriteApp', [])
                     });
                     $scope.categories.push({id: 0, name: "Everything", references: sum});
                     link = BASE_URL + 'favourite/get?';
-                    if(itemFilter) {
-                        link+="categoryId="+itemFilter;
+                    if($scope.categoryFilter) {
+                        link+="categoryId="+$scope.categoryFilter;
                     }
                     $http.get(link).then(
                         function(res) {
@@ -67,7 +69,8 @@ angular.module('favoriteApp', [])
         }
 
         $scope.filterFavorites = function(catFilter) {
-            $scope.refresh(catFilter);
+            $scope.categoryFilter = catFilter;
+            $scope.refresh();
         }
 
         $scope.refresh();
@@ -78,5 +81,44 @@ angular.module('favoriteApp', [])
                     $scope.refresh();
                 }
             );
+        }
+        $scope.sort = function(sortBy) {
+            link = BASE_URL + 'favourite/get?';
+            link+="sortBy="+sortBy+"&sortType="+$scope.sortType[sortBy];
+            $scope.sortType[sortBy]=$scope.sortType[sortBy]==="ASC"?"DESC":"ASC";
+            if($scope.categoryFilter) {
+                link+="&categoryId="+$scope.categoryFilter;
+            }
+            $http.get(link).then(
+                function(res) {
+                    $scope.favorites = res.data;
+                }
+            )
+        }
+        $scope.toggleAll = function() {
+           if($scope.allChecked) {
+                $scope.checked.fill(true);
+           }
+           else {
+                $scope.checked.fill(false);
+           }
+        }
+        $scope.toggle = function(id) {
+            if(!$scope.checked[id]) {
+                $scope.allChecked = false;
+            }
+        }
+        $scope.deleteMultiple = function() {
+            toDelete = [];
+            for(const index in $scope.checked) {
+                if($scope.checked[index]) {
+                    toDelete.push(index);
+                }
+            }
+            if(toDelete.length > 0) {
+                $http.delete(BASE_URL + 'favourite/delete?ids='+toDelete.join(","));
+                $scope.refresh();
+            }
+            
         }
     });
