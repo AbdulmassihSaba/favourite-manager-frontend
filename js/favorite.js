@@ -113,6 +113,7 @@ angular.module('favoriteApp', [])
             for(const fav of $scope.favorites) {
                 $scope.checked[fav.id] = $scope.allChecked;
             }
+            $scope.numChecked = ($scope.allChecked?$scope.favorites.length:0);
         }
         $scope.toggle = function(id) {
             $scope.numChecked += ($scope.checked[id]?1:-1);
