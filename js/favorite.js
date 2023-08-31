@@ -93,15 +93,6 @@ angular.module('favoriteApp', [])
 
         $scope.refresh();
 
-        $scope.delete = function(id) {
-            if(confirm("Are you sure you want to delete id " + id + " ?")) {
-                $http.delete(BASE_URL + 'favourite/delete?ids='+id).then(
-                    function() {
-                        $scope.refresh();
-                    }
-                );
-            }
-        }
         $scope.sort = function(sortBy) {
             link = BASE_URL + 'favourite/get?';
             link+="sortBy="+sortBy+"&sortType="+$scope.sortType[sortBy];
