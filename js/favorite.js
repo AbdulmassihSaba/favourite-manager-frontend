@@ -10,7 +10,7 @@ angular.module('favoriteApp', [])
         $scope.favorite = {};
         $scope.checked = new Array(100).fill(false);
         $scope.allChecked = false;
-
+        $scope.numChecked = 0;
         $scope.setMode = function(text) {
             if (text === 'creation') {
                 $scope.realCategories = $scope.categories.filter(function(c) { return c.id !== 0 });
@@ -32,6 +32,15 @@ angular.module('favoriteApp', [])
         }
 
         $scope.validate = function() {
+            fetch($scope.favorite.link, { method: 'HEAD' })
+                .then(response => {
+                    if (!response.ok) {
+                        alert('The link you entered is not valid');
+                    }
+                })
+                .catch(error => {
+                    alert('The link you entered is not valid');
+                });
             data={ id: $scope.favorite.id, link: $scope.favorite.link, categoryId:  $scope.favorite.category};
             $http.post(BASE_URL + 'favourite/add', data).then(
                 function() {
@@ -66,6 +75,9 @@ angular.module('favoriteApp', [])
                     
                 }
             )
+            $scope.numChecked = 0;
+            $scope.allChecked = 0;
+            $scope.checked.fill(false);
         }
 
         $scope.filterFavorites = function(catFilter) {
@@ -76,11 +88,13 @@ angular.module('favoriteApp', [])
         $scope.refresh();
 
         $scope.delete = function(id) {
-            $http.delete(BASE_URL + 'favourite/delete?ids='+id).then(
-                function() {
-                    $scope.refresh();
-                }
-            );
+            if(confirm("Are you sure you want to delete id " + id + " ?")) {
+                $http.delete(BASE_URL + 'favourite/delete?ids='+id).then(
+                    function() {
+                        $scope.refresh();
+                    }
+                );
+            }
         }
         $scope.sort = function(sortBy) {
             link = BASE_URL + 'favourite/get?';
@@ -96,29 +110,29 @@ angular.module('favoriteApp', [])
             )
         }
         $scope.toggleAll = function() {
-           if($scope.allChecked) {
-                $scope.checked.fill(true);
-           }
-           else {
-                $scope.checked.fill(false);
-           }
+            for(const fav of $scope.favorites) {
+                $scope.checked[fav.id] = $scope.allChecked;
+            }
         }
         $scope.toggle = function(id) {
-            if(!$scope.checked[id]) {
-                $scope.allChecked = false;
-            }
+            $scope.numChecked += ($scope.checked[id]?1:-1);
+            $scope.allChecked = ($scope.numChecked===$scope.favorites.length);
+            
         }
         $scope.deleteMultiple = function() {
             toDelete = [];
-            for(const index in $scope.checked) {
-                if($scope.checked[index]) {
-                    toDelete.push(index);
+            for(const favorite of $scope.favorites) {
+                if($scope.checked[favorite.id]) {
+                    toDelete.push(favorite.id);
+                    $scope.checked[favorite.id] = false;
+                    $scope.allChecked = false;
                 }
             }
-            if(toDelete.length > 0) {
-                $http.delete(BASE_URL + 'favourite/delete?ids='+toDelete.join(","));
-                $scope.refresh();
-            }
-            
+            if(confirm("Are you sure you want to delete these ids: " + toDelete + " ?")) {
+                if(toDelete.length > 0) {
+                    $http.delete(BASE_URL + 'favourite/delete?ids='+toDelete.join(","));
+                    $scope.refresh();
+                }
+            }    
         }
     });
