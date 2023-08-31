@@ -1,7 +1,7 @@
-
 angular.module('favoriteApp', [])
     .controller('FavoritesController', function($scope, $http) {
         BASE_URL = "http://127.0.0.1:8080/";
+
         $scope.categories = [];
         $scope.realCategories = [];
         $scope.favorites = [];
@@ -36,7 +36,7 @@ angular.module('favoriteApp', [])
             fetch($scope.favorite.link, { method: 'HEAD' })
                 .then(response => {
                     if (!response.ok) {
-                        alert('The link you entered is not valid');
+                        swal("Error", "The link you entered is not valid", "error");
                     }
                     else {
                         data={ id: $scope.favorite.id, link: $scope.favorite.link, categoryId:  $scope.favorite.category};
@@ -49,12 +49,12 @@ angular.module('favoriteApp', [])
                             }
                         )
                         $scope.categoryFilter = 0;
+                        swal("Success", "A favorite was added successfully", "success");
                     }
                 })
                 .catch(error => {
-                    alert('The link you entered is not valid');
-                });
-            
+                    swal("Error", "The link you entered is not valid", "error");
+                }); 
         }
 
         $scope.refresh = function() {
