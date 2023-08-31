@@ -78,6 +78,8 @@ angular.module('favoriteApp', [])
             $scope.numChecked = 0;
             $scope.allChecked = 0;
             $scope.checked.fill(false);
+            $scope.sortType['category'] = "ASC";
+            $scope.sortType['updateTime'] = "ASC";
         }
 
         $scope.filterFavorites = function(catFilter) {

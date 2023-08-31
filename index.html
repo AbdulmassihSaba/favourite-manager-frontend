@@ -82,8 +82,16 @@
                     </th>
                     <th class="is-narrow">ID</th>
                     <th>Link</th>
-                    <th data-ng-click="sort('category')" class="is-clickable">Category</th>
-                    <th data-ng-click="sort('updateTime')" class="is-narrow is-clickable">Last Update</th>
+                    <th data-ng-click="sort('category')" class="is-clickable">
+                      <span>Category</span>
+                      <span data-ng-if="sortType['category']==='ASC'">&#x2191;</span>
+                      <span data-ng-if="sortType['category']==='DESC'">&#x2193;</span>
+                    </th>
+                    <th data-ng-click="sort('updateTime')" class="is-narrow is-clickable">
+                      <span>Last Update</span>
+                      <span data-ng-if="sortType['updateTime']==='ASC'">&#x2191;</span>
+                      <span data-ng-if="sortType['updateTime']==='DESC'">&#x2193;</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
