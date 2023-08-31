@@ -1,3 +1,4 @@
+
 angular.module('favoriteApp', [])
     .controller('FavoritesController', function($scope, $http) {
         BASE_URL = "http://127.0.0.1:8080/";
@@ -37,20 +38,23 @@ angular.module('favoriteApp', [])
                     if (!response.ok) {
                         alert('The link you entered is not valid');
                     }
+                    else {
+                        data={ id: $scope.favorite.id, link: $scope.favorite.link, categoryId:  $scope.favorite.category};
+                        $http.post(BASE_URL + 'favourite/add', data).then(
+                            function() {
+                                $scope.refresh();
+                                $scope.setMode('view');
+                            }, function(error) {
+                                alert(error.data.message);
+                            }
+                        )
+                        $scope.categoryFilter = 0;
+                    }
                 })
                 .catch(error => {
                     alert('The link you entered is not valid');
                 });
-            data={ id: $scope.favorite.id, link: $scope.favorite.link, categoryId:  $scope.favorite.category};
-            $http.post(BASE_URL + 'favourite/add', data).then(
-                function() {
-                    $scope.refresh();
-                    $scope.setMode('view');
-                }, function(error) {
-                    alert(error.data.message);
-                }
-            )
-            $scope.categoryFilter = 0;
+            
         }
 
         $scope.refresh = function() {
