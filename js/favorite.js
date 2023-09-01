@@ -126,11 +126,30 @@ angular.module('favoriteApp', [])
                     $scope.allChecked = false;
                 }
             }
-            if(confirm("Are you sure you want to delete these ids: " + toDelete + " ?")) {
-                if(toDelete.length > 0) {
-                    $http.delete(BASE_URL + 'favourite/delete?ids='+toDelete.join(","));
-                    $scope.refresh();
+            swal({
+                title: 'Are you sure you want to delete these ids: ' + toDelete + '?',
+                buttons: {
+                    cancel: {
+                        text: "Cancel",
+                        value: null,
+                        visible: true,
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "OK",
+                        value: true,
+                        visible: true,
+                        closeModal: true
+                    }
                 }
-            }    
+                
+              }).then((result) => {
+                if (result) {
+                    if(toDelete.length > 0) {
+                        $http.delete(BASE_URL + 'favourite/delete?ids='+toDelete.join(","));
+                        $scope.refresh();
+                    }
+                }
+              });
         }
     });
