@@ -33,9 +33,9 @@ angular.module('favoriteApp', [])
         }
 
         $scope.validate = function() {
-            fetch($scope.favorite.link, { method: 'HEAD' })
+            fetch($scope.favorite.link, { method: 'HEAD', mode: 'no-cors'})
                 .then(response => {
-                    if (!response.ok) {
+                    if (response.status=="404") {
                         swal("Error", "The link you entered is not valid", "error");
                     }
                     else {
